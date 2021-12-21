@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/txtHello"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="false"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="false"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="hello"
+        android:textColor="@color/teal_700"
+        android:textSize="90sp"
+        android:textStyle="bold|italic" />
+
+    <EditText
+        android:id="@+id/editTxtName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtHello"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="82dp"
+        android:hint="name"
+        android:textColor="@color/teal_700" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnHi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editTxtName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="#0C90B8"
+        android:onClick="onClick"
+        android:text="hi" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkRelLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/btnHi">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="big fish"
+            android:id="@+id/bigFish" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bigFish"
+            android:text="small pencil"
+            android:id="@+id/smallPencil" />
+
+        <CheckBox
+            android:id="@+id/medSteak"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/bigFish"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@id/smallPencil"
+            android:text="medium steak" />
+    </RelativeLayout>
+
+
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/checkRelLayout"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:id="@+id/fishRadioGroup">
+
+        <RadioButton
+            android:id="@+id/haveFish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="have small fish" />
+
+        <RadioButton
+            android:id="@+id/haveNoFish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="have no small fish" />
+
+    </RadioGroup>
+
+    <ImageView
+        android:id="@+id/imageViewId"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_below="@+id/fishRadioGroup">
+
+    </ImageView>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="#0C90B8"
+        android:layout_below="@+id/checkRelLayout"
+        android:text="okay then"
+        android:onClick="newActivity">
+
+    </androidx.appcompat.widget.AppCompatButton>
+
+</RelativeLayout>

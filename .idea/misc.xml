@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Zain/AndroidStudioProjects/localAndroidprojects/app/src/main/res/layout/activity_main.xml" value="0.35104166666666664" />
+        <entry key="..\:/Users/Zain/AndroidStudioProjects/localAndroidprojects/app/src/main/res/layout/activity_main2.xml" value="0.35104166666666664" />
+        <entry key="..\:/Users/Zain/OneDrive/Final year project stuff/Local Android Projects/BlockchainLayoutV2 - Copy/app/src/main/res/layout/activity_item_menu.xml" value="0.35104166666666664" />
+        <entry key="..\:/Users/Zain/OneDrive/Final year project stuff/Local Android Projects/BlockchainLayoutV2 - Copy/app/src/main/res/layout/activity_main2.xml" value="0.35104166666666664" />
+        <entry key="..\:/Users/Zain/OneDrive/Final year project stuff/Local Android Projects/BlockchainLayoutV2/app/src/main/res/layout/activity_main2.xml" value="0.35104166666666664" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
