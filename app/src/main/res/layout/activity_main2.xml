@@ -108,12 +108,12 @@
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:background="#0C90B8"
         android:layout_below="@+id/checkRelLayout"
-        android:text="okay then"
-        android:onClick="newActivity">
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:background="#0C90B8"
+        android:onClick="newActivity"
+        android:text="okay then">
 
     </androidx.appcompat.widget.AppCompatButton>
 

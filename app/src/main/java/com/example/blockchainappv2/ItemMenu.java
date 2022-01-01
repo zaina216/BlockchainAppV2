@@ -3,8 +3,10 @@ package com.example.blockchainappv2;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 public class ItemMenu extends AppCompatActivity {
@@ -13,7 +15,7 @@ public class ItemMenu extends AppCompatActivity {
 
     //This is a test to see if changes work.
 
-    private RelativeLayout rl;
+    private LinearLayout rl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +33,25 @@ public class ItemMenu extends AppCompatActivity {
             }
         });
     }
-
+    int numOfItems=0;
     public void addlayoutBtn(View view) {
 
-        rl = findViewById(R.id.bottom_part);
+
+        System.out.println(numOfItems);
 
 
+        rl = (LinearLayout) findViewById(R.id.bottom_part);
+        LayoutInflater inflater = getLayoutInflater();
+        View itemLayout = inflater.inflate(R.layout.item, rl, false);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        if (numOfItems != 0) {
+            params.addRule(RelativeLayout.BELOW, itemLayout.getId());
+        }
+
+        rl.addView(itemLayout, params);
+        numOfItems++;
     }
 }
