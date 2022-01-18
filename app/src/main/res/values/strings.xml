@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">BlockchainAppV2</string>
+    <string name="mint_item">Mint item</string>
+    <string name="item_description">Item description</string>
+    <string name="item_name">Item name</string>
+    <string name="upload_item">Upload item</string>
 </resources>

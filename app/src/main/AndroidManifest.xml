@@ -14,15 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BlockchainAppV2">
         <activity
+            android:name=".item_upload"
+            android:exported="false" />
+        <activity
             android:name=".ItemMenu"
             android:exported="false"
-            android:parentActivityName="com.example.blockchainappv2.MainActivity"
-            />
-
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

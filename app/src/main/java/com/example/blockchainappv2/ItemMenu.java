@@ -1,7 +1,12 @@
 package com.example.blockchainappv2;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static org.web3j.tx.Transfer.GAS_LIMIT;
+import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,13 +14,38 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.gas.DefaultGasProvider;
+
+import java.math.BigInteger;
+
 public class ItemMenu extends AppCompatActivity {
 
+    private final String PRIVATE_KEY = "664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd";
+    //private final String PRIVATE_KEY = "ddfc78e76722eacbd5f9c4401fae889c7106b21abafa5cbe459a6048fa75c976";
+    private final BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
+    private final BigInteger GAS_LIMIT = BigInteger.valueOf(6721975L);
+    private final String RECIPIENT = "0x647067E5140f1Befe80d695b129a12F22f772675";
+    //    private final String CONTRACT_ADDRESS = "0x22E279B66Bb08a61DF776e765B9519F9FA56673C";
+//    private final String CONTRACT_ADDRESS = "0x1b208c90e60EDb5c53f7580dDf23861cA08EBd00";
+//    private final String CONTRACT_ADDRESS = "0xb7b849e4b790906c9a2e2b1f6933e5403bad97c5";
+    private final String CONTRACT_ADDRESS = "0x2100448fd5c91d5d28024561b23143f865d0f4a4";
+
+    boolean addlayoutClicked = false;
+
+
+
+    Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
+    //                Web3j web3j = Web3j.build(new HttpService("http://192.168.1.108:8545"));
+    Credentials credentials = getCredentialsFromPrivateKey();
+    Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
+
     private ImageView mImageView;
+    int numOfItems=0;
 
-    //This is a test to see if changes work.
-
-    private LinearLayout rl;
+    final int[] nftBal = new int[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,26 +62,108 @@ public class ItemMenu extends AppCompatActivity {
 
             }
         });
-    }
-    int numOfItems=0;
-    public void addlayoutBtn(View view) {
 
+        //getting item inventory of current user
+        Intent intent = getIntent();
+        numOfItems = intent.getIntExtra("nftBal", 0);
+//        int[] nftBal = new int[1];
 
-        System.out.println(numOfItems);
+        Thread thread  = new Thread(new Runnable() {
+            @Override
+            public void run() {
 
+                try {
+                    nftBal[0] = Integer.parseInt(nft.balanceOf("0x2412F42C68dDe2Ee49514975d3bEA066B1320723").send().toString());
+                    System.out.println(nftBal[0]);
 
-        rl = (LinearLayout) findViewById(R.id.bottom_part);
-        LayoutInflater inflater = getLayoutInflater();
-        View itemLayout = inflater.inflate(R.layout.item, rl, false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                AppCompatButton btn = findViewById(R.id.startItemlist);
+                btn.performClick();
 
-        if (numOfItems != 0) {
-            params.addRule(RelativeLayout.BELOW, itemLayout.getId());
+            }
+        });
+        thread.start();
+        System.out.println("bal: "+ nftBal[0]);
+
+        for(int i = 0; i < nftBal[0]; i++){
+
+            LinearLayout rl = (LinearLayout) findViewById(R.id.bottom_part);
+            LayoutInflater inflater = getLayoutInflater();
+            View itemLayout = inflater.inflate(R.layout.item, rl, false);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+            if (nftBal[0] != 0) {
+                params.addRule(RelativeLayout.BELOW, itemLayout.getId());
+            }
+
+            rl.addView(itemLayout, params);
         }
 
-        rl.addView(itemLayout, params);
-        numOfItems++;
+        nftBal[0]++;
+
+    }
+
+    private Credentials getCredentialsFromPrivateKey(){
+        return Credentials.create(PRIVATE_KEY);
+    }
+
+    private String deployContract(Web3j web3j, Credentials credentials) throws Exception {
+//        return Erc721.deploy(
+//                web3j,
+//                credentials,
+//                GAS_PRICE,
+//                GAS_LIMIT).send().getContractAddress();
+        return com.example.blockchainappv2.Sc_test.deploy(web3j, credentials, new DefaultGasProvider()).send().getContractAddress();
+    }
+
+    private com.example.blockchainappv2.Sc_test loadContract(String deployedAddr, Web3j web3j, Credentials credentials){
+        return com.example.blockchainappv2.Sc_test.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
+    }
+
+    public void onClickAddLayout(View view) {
+
+        System.out.println("bal: "+ nftBal[0]);
+
+        if(addlayoutClicked){
+            recreate();
+        }
+
+        for(int i = 0; i < nftBal[0]; i++){
+
+            LinearLayout rl = (LinearLayout) findViewById(R.id.bottom_part);
+            LayoutInflater inflater = getLayoutInflater();
+            View itemLayout = inflater.inflate(R.layout.item, rl, false);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+            if (nftBal[0] != 0) {
+                params.addRule(RelativeLayout.BELOW, itemLayout.getId());
+            }
+
+            rl.addView(itemLayout, params);
+
+            addlayoutClicked = true;
+        }
+
+        nftBal[0]++;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

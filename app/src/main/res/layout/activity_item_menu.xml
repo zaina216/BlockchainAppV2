@@ -79,7 +79,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginBottom="10dp"
             android:background="#0C90B8"
-            android:onClick="addlayoutBtn"
+            android:onClick="onClickAddLayout"
             android:text="addLayout" />
 
     </RelativeLayout>
@@ -88,7 +88,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/top_part">
+        android:layout_below="@id/top_part"
+        android:scrollbarThumbVertical="@android:color/holo_blue_light">
 
         <LinearLayout
             android:id="@+id/bottom_part"

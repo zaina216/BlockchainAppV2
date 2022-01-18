@@ -111,10 +111,12 @@
         android:layout_below="@+id/checkRelLayout"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
+        android:id="@+id/startItemlist"
         android:background="#0C90B8"
         android:onClick="newActivity"
         android:text="okay then">
 
     </androidx.appcompat.widget.AppCompatButton>
+
 
 </RelativeLayout>

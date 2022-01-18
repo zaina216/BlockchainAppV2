@@ -9,13 +9,18 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.web3j.abi.datatypes.Type;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
+import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Keys;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
@@ -31,6 +36,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Provider;
+import java.security.Security;
 
 import pinata.Pinata;
 import pinata.PinataException;
@@ -39,6 +49,7 @@ import pinata.PinataResponse;
 public class MainActivity extends AppCompatActivity {
 
     private final String PRIVATE_KEY = "664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd";
+    //perhaps we can keep this key the same for every account
     //private final String PRIVATE_KEY = "ddfc78e76722eacbd5f9c4401fae889c7106b21abafa5cbe459a6048fa75c976";
     private final BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
     private final BigInteger GAS_LIMIT = BigInteger.valueOf(6721975L);
@@ -48,30 +59,149 @@ public class MainActivity extends AppCompatActivity {
 //    private final String CONTRACT_ADDRESS = "0xb7b849e4b790906c9a2e2b1f6933e5403bad97c5";
     private final String CONTRACT_ADDRESS = "0x2100448fd5c91d5d28024561b23143f865d0f4a4";
 
+
+
+    Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
+    //                Web3j web3j = Web3j.build(new HttpService("http://192.168.1.108:8545"));
+
+
+//    Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
+
     private final String TAG = "MainActivity";
     private ImageView mImageView;
+    final int[] bal = {0};
+
+    private void setupBouncyCastle() {
+        final Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
+        if (provider == null) {
+            // Web3j will set up the provider lazily when it's first used.
+            return;
+        }
+        if (provider.getClass().equals(BouncyCastleProvider.class)) {
+            // BC with same package name, shouldn't happen in real life.
+            return;
+
+        }
+        // Android registers its own BC provider. As it might be outdated and might not include
+        // all needed ciphers, we substitute it with a known BC bundled in the app.
+        // Android's BC has its package rewritten to "com.android.org.bouncycastle" and because
+        // of that it's possible to have another BC implementation loaded in VM.
+        Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        Security.insertProviderAt(new BouncyCastleProvider(), 1);
+    }
+
+    public Credentials createCredentialsUsingEcPair(){
+        setupBouncyCastle();
+
+        ECKeyPair keys = null;
+
+        {
+            try {
+                keys = Keys.createEcKeyPair();
+                System.out.println("keys created");
+            } catch (InvalidAlgorithmParameterException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (NoSuchProviderException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+
+        Credentials dummyCredentials = Credentials.create(keys);
+
+        {
+            try {
+                dummyCredentials = Credentials.create(Keys.createEcKeyPair());
+            } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return dummyCredentials;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+//        setupBouncyCastle();
+//
+//        Credentials credentials = getCredentialsFromPrivateKey();
+//
+//        ECKeyPair keys = null;
+//
+//        {
+//            try {
+//                keys = Keys.createEcKeyPair();
+//                System.out.println("keys created");
+//            } catch (InvalidAlgorithmParameterException e) {
+//                e.printStackTrace();
+//            } catch (NoSuchAlgorithmException e) {
+//                e.printStackTrace();
+//            } catch (NoSuchProviderException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//
+//
+//    Credentials dummyCredentials = Credentials.create(keys);
+//
+//    {
+//        try {
+//            dummyCredentials = Credentials.create(Keys.createEcKeyPair());
+//        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//        Credentials dummyCredentials = createCredentialsUsingEcPair();
+//        Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, dummyCredentials);
+//
+//        Thread thread  = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                try {
+////                    bal[0] = Integer.parseInt(nft.balanceOf("0x2412F42C68dDe2Ee49514975d3bEA066B1320723").send().toString());
+////                    System.out.println(bal[0]);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        });
+//        thread.start();
     }
 
     public void newActivity(View view) {
 
+
         Intent intent = new Intent(this, ItemMenu.class);
+        System.out.println(bal[0]);
+
 //        EditText editText = (EditText) findViewById(R.id.editTextTextPersonName);
 //        String message = editText.getText().toString();
-//        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra("nftBal", bal[0]);
+        //Reload the contract many in each activity. Hacky, I know, but we cant implement serialisable in Sc_test.
+//        intent.putExtra("contractObj")
         startActivity(intent);
+
+    }
+
+    public MainActivity(){
 
     }
 
     public void onClick(View view) {
 
-        Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
+//        Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
 //                Web3j web3j = Web3j.build(new HttpService("http://192.168.1.108:8545"));
+//        Credentials credentials = createCredentialsUsingEcPair();
         Credentials credentials = getCredentialsFromPrivateKey();
+        Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -79,54 +209,54 @@ public class MainActivity extends AppCompatActivity {
 //                            String deployedAddr =  deployContract(web3j,credentials);//deployed once; don't deploy again
 //                            Log.d(TAG, deployedAddr); //Erc721: 0x279635563b42541A3372bCf0c75898211A6AE1Bd, ERC721deployable: 0xf9ec635edbc2c21f1e0ca1d68af8849bf38f6571
                     //ERC721DeployableAndMintable: 0x1b208c90e60EDb5c53f7580dDf23861cA08EBd00
-                    Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
+//                  Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
 
-//                            String n = nft.name().sendAsync().toString();
+//                  String n = nft.name().sendAsync().toString();
 
-//                            String n = nft.name().send();
-//                            Log.d(TAG, "name of NFT: " + n);
-
-//                            String id = String.valueOf(nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723", "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
+//                  String n = nft.name().send();
+//                  Log.d(TAG, "name of NFT: " + n);
+                    System.out.println("MINTING...");
+                    String id = String.valueOf(nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723", "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
 
 
 //                            Type result = (Type) nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send();
-//                            System.out.println("MINT COMPLETE");
+                    System.out.println("MINT COMPLETE");
 //
 //                            System.out.println(result.getTypeAsString());
-
+//                    System.out.println("id: " + id);
 //                            nft.setName("ZUniqueToken").send();
 //                            nft.setSym("ZEXT").send();
                     Log.d(TAG, nft.balanceOf("0x2412F42C68dDe2Ee49514975d3bEA066B1320723").send().toString());
-                    Log.d(TAG, "name:"+nft.name().send());
-                    Log.d(TAG, "owner: "+ nft.ownerOf(BigInteger.valueOf(1)).send());
-                            nft.transferFrom("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","0x0000000000000000000000000000000000000001",BigInteger.valueOf(3)).send();
-                            Log.d(TAG, "transferred?");
-                            Log.d(TAG, "owner: "+ nft.ownerOf(BigInteger.valueOf(3)).send());
+//                    Log.d(TAG, "name:"+nft.name().send());
+//                    Log.d(TAG, "owner: "+ nft.ownerOf(BigInteger.valueOf(1)).send());
+//                            nft.transferFrom("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","0x0000000000000000000000000000000000000001",BigInteger.valueOf(3)).send();
+//                            Log.d(TAG, "transferred?");
+//                            Log.d(TAG, "owner: "+ nft.ownerOf(BigInteger.valueOf(3)).send());
 
-                            Pinata pinata = new Pinata("6296046404a96424609a", "a7d827beac22e26015680273dd8622af45f4733a51df75bf9f3dcd000affbf34");
+                    Pinata pinata = new Pinata("6296046404a96424609a", "a7d827beac22e26015680273dd8622af45f4733a51df75bf9f3dcd000affbf34");
 
-                            // If you created a Pinata instance with keys
-                            try {
-                                PinataResponse authResponse = pinata.testAuthentication();
-                                // If a PinataException hasn't been been thrown, it means that the status is 200
-                                //System.out.println(authResponse.getStatus()); // 200
-                                Log.d(TAG, String.valueOf(authResponse.getStatus()));
-                            } catch (PinataException e) {
-                                // The status returned is not 200
-                            } catch (IOException e) {
-                                // Unable to send request
-                            }
+                    // If you created a Pinata instance with keys
+                    try {
+                        PinataResponse authResponse = pinata.testAuthentication();
+                        // If a PinataException hasn't been been thrown, it means that the status is 200
+                        //System.out.println(authResponse.getStatus()); // 200
+                        Log.d(TAG, String.valueOf(authResponse.getStatus()));
+                    } catch (PinataException e) {
+                        // The status returned is not 200
+                    } catch (IOException e) {
+                        // Unable to send request
+                    }
 
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
 
 
-                                mImageView = (ImageView) findViewById(R.id.imageViewId);
-                                mImageView.setImageResource(R.drawable.pop_cat);
+                        mImageView = (ImageView) findViewById(R.id.imageViewId);
+                        mImageView.setImageResource(R.drawable.pop_cat);
 
-                                }
-                            });
+                        }
+                    });
 
 
 
