@@ -49,7 +49,6 @@ import pinata.PinataResponse;
 public class MainActivity extends AppCompatActivity {
 
     private final String PRIVATE_KEY = "664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd";
-    //perhaps we can keep this key the same for every account
     //private final String PRIVATE_KEY = "ddfc78e76722eacbd5f9c4401fae889c7106b21abafa5cbe459a6048fa75c976";
     private final BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
     private final BigInteger GAS_LIMIT = BigInteger.valueOf(6721975L);
