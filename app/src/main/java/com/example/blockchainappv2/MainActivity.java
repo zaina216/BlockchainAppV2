@@ -1,5 +1,7 @@
 package com.example.blockchainappv2;
-
+//users can log in with their own private keys and access the smart contract
+//use a single smart contract to manage all transactions
+//can transfer using contract but contract doesn't know the token's in the other account
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,8 +16,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.w3c.dom.Text;
 import org.web3j.abi.datatypes.Type;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
@@ -49,6 +53,7 @@ import pinata.PinataResponse;
 public class MainActivity extends AppCompatActivity {
 
     private final String PRIVATE_KEY = "664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd";
+    private final String PRIVATE_KEY_CHROME = "35a49d01c8211b3f968371d429d32606bafe38dae4835aa93dfe4ea5dd17c8c9";
     //perhaps we can keep this key the same for every account
     //private final String PRIVATE_KEY = "ddfc78e76722eacbd5f9c4401fae889c7106b21abafa5cbe459a6048fa75c976";
     private final BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
@@ -58,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 //    private final String CONTRACT_ADDRESS = "0x1b208c90e60EDb5c53f7580dDf23861cA08EBd00";
 //    private final String CONTRACT_ADDRESS = "0xb7b849e4b790906c9a2e2b1f6933e5403bad97c5";
     private final String CONTRACT_ADDRESS = "0x2100448fd5c91d5d28024561b23143f865d0f4a4";
-
+    private final String CONTRACT_ADDRESS_CHROME = "0x0bb2df51764ebcbf844498e81aba2bd1445a81c0";
 
 
     Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
@@ -127,36 +132,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-//        setupBouncyCastle();
-//
-//        Credentials credentials = getCredentialsFromPrivateKey();
-//
-//        ECKeyPair keys = null;
-//
-//        {
-//            try {
-//                keys = Keys.createEcKeyPair();
-//                System.out.println("keys created");
-//            } catch (InvalidAlgorithmParameterException e) {
-//                e.printStackTrace();
-//            } catch (NoSuchAlgorithmException e) {
-//                e.printStackTrace();
-//            } catch (NoSuchProviderException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//
-//
-//    Credentials dummyCredentials = Credentials.create(keys);
-//
-//    {
-//        try {
-//            dummyCredentials = Credentials.create(Keys.createEcKeyPair());
-//        } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
-//            e.printStackTrace();
-//        }
-//    }
 //        Credentials dummyCredentials = createCredentialsUsingEcPair();
 //        Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, dummyCredentials);
 //
@@ -178,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void newActivity(View view) {
 
-
         Intent intent = new Intent(this, ItemMenu.class);
         System.out.println(bal[0]);
 
@@ -188,7 +162,12 @@ public class MainActivity extends AppCompatActivity {
         //Reload the contract many in each activity. Hacky, I know, but we cant implement serialisable in Sc_test.
 //        intent.putExtra("contractObj")
         startActivity(intent);
+    }
+    public void startItemUpload(View view) {
 
+        // When clicked, button starts item upload activity
+        Intent intent = new Intent(this, item_upload.class);
+        startActivity(intent);
     }
 
     public MainActivity(){
@@ -196,27 +175,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClick(View view) {
-
-//        Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
+        Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
 //                Web3j web3j = Web3j.build(new HttpService("http://192.168.1.108:8545"));
 //        Credentials credentials = createCredentialsUsingEcPair();
         Credentials credentials = getCredentialsFromPrivateKey();
-        Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
+//        Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-//                            String deployedAddr =  deployContract(web3j,credentials);//deployed once; don't deploy again
+//                    System.out.println("deploying");
+//                    String deployedAddr =  deployContract(web3j,credentials);//deployed once; don't deploy again
+//                    System.out.println("_________________new contract address:" + deployedAddr + "_________________");
 //                            Log.d(TAG, deployedAddr); //Erc721: 0x279635563b42541A3372bCf0c75898211A6AE1Bd, ERC721deployable: 0xf9ec635edbc2c21f1e0ca1d68af8849bf38f6571
                     //ERC721DeployableAndMintable: 0x1b208c90e60EDb5c53f7580dDf23861cA08EBd00
-//                  Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
+                  Sc_test nft = loadContract(CONTRACT_ADDRESS_CHROME, web3j, credentials);
 
 //                  String n = nft.name().sendAsync().toString();
 
 //                  String n = nft.name().send();
 //                  Log.d(TAG, "name of NFT: " + n);
                     System.out.println("MINTING...");
-                    String id = String.valueOf(nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723", "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
+//                    String id = String.valueOf(nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723", "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
 
 
 //                            Type result = (Type) nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send();
@@ -226,12 +206,14 @@ public class MainActivity extends AppCompatActivity {
 //                    System.out.println("id: " + id);
 //                            nft.setName("ZUniqueToken").send();
 //                            nft.setSym("ZEXT").send();
-                    Log.d(TAG, nft.balanceOf("0x2412F42C68dDe2Ee49514975d3bEA066B1320723").send().toString());
+                    Log.d(TAG, nft.balanceOf("0xa7D7dF54C33E6579C9dE2AFF3dF86DD2F0723c28").send().toString());
 //                    Log.d(TAG, "name:"+nft.name().send());
 //                    Log.d(TAG, "owner: "+ nft.ownerOf(BigInteger.valueOf(1)).send());
-//                            nft.transferFrom("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","0x0000000000000000000000000000000000000001",BigInteger.valueOf(3)).send();
+//                    nft.transferFrom("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","0xa7D7dF54C33E6579C9dE2AFF3dF86DD2F0723c28",BigInteger.valueOf(4)).send();
+//                    nft.transferFrom("0xa7D7dF54C33E6579C9dE2AFF3dF86DD2F0723c28","0x2412F42C68dDe2Ee49514975d3bEA066B1320723",BigInteger.valueOf(4)).send();
+
 //                            Log.d(TAG, "transferred?");
-//                            Log.d(TAG, "owner: "+ nft.ownerOf(BigInteger.valueOf(3)).send());
+//                            Log.d(TAG, "owner: "+ nft.ownerOf(BigInteger.valueOf(4)).send());
 
                     Pinata pinata = new Pinata("6296046404a96424609a", "a7d827beac22e26015680273dd8622af45f4733a51df75bf9f3dcd000affbf34");
 
@@ -284,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
 //                            Log.d(TAG, resp.IpfsHash);
 //
 //                            String interwebAddress = "https://gateway.pinata.cloud/ipfs/" + resp.IpfsHash;
-
+                    {
 //                            // Pull all the events for this contract
 //                            final Uint256[] arg3 = new Uint256[1];
 //                            web3j.ethLogFlowable(filter).subscribe(log -> {
@@ -305,8 +287,8 @@ public class MainActivity extends AppCompatActivity {
 //                            Log.d(TAG, "UINT256 VALUE:" + arg3[0]);
 //                            Log.d(TAG, "===================================================================");
 
-                    //token doesn't exist as of yet after minting, so stuff here will error
-                    // can keep creating nfts to represent items, will be using differet URIs to get images and descriptions.
+                        //token doesn't exist as of yet after minting, so stuff here will error
+                        // can keep creating nfts to represent items, will be using differet URIs to get images and descriptions.
 //                            Log.d(TAG, nft.getDeployedAddress("4"));
 //                            Log.d(TAG, "Owner of NFT id 0: "+nft.ownerOf(BigInteger.valueOf(0)).sendAsync().get().toString());
 //                            Log.d(TAG, "name: " + n);
@@ -317,6 +299,7 @@ public class MainActivity extends AppCompatActivity {
 //
 //                            addAddresses(getAddr);
 //                            printAddresses(getAddr);
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -326,6 +309,7 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
     }
 
+    {
 //    private void addAddresses(AddressBook addressBook) throws Exception {
 //        addressBook
 //                .addAddress("0x35fEF2216D1426Eb69b3a5BC3F76c62Cb770F360", "joooaaaaoo")
@@ -341,6 +325,34 @@ public class MainActivity extends AppCompatActivity {
 ////            System.out.println("");
 //        }
 //    }
+    }
+
+
+
+    private Credentials getCredentialsFromPrivateKey(){
+        TextView key = (TextView) findViewById(R.id.editUploadTxtName);
+        if(key.getText().toString().equals("")){
+            return Credentials.create(PRIVATE_KEY_CHROME);
+        } else {
+            return Credentials.create(key.getText().toString());
+        }
+
+
+    }
+
+    private com.example.blockchainappv2.Sc_test loadContract(String deployedAddr, Web3j web3j, Credentials credentials){
+        return com.example.blockchainappv2.Sc_test.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
+    }
+
+    private String deployContract(Web3j web3j, Credentials credentials) throws Exception {
+//        return Erc721.deploy(
+//                web3j,
+//                credentials,
+//                GAS_PRICE,
+//                GAS_LIMIT).send().getContractAddress();
+        return com.example.blockchainappv2.Sc_test.deploy(web3j, credentials, new DefaultGasProvider()).send().getContractAddress();
+    }
+
     private Bitmap getBitmapFromAsset(String strName)
     {
         AssetManager assetManager = getAssets();
@@ -392,24 +404,6 @@ public class MainActivity extends AppCompatActivity {
                 GAS_PRICE,
                 GAS_LIMIT
         ).send();
-
-
     }
 
-    private Credentials getCredentialsFromPrivateKey(){
-        return Credentials.create(PRIVATE_KEY);
-    }
-
-    private String deployContract(Web3j web3j, Credentials credentials) throws Exception {
-//        return Erc721.deploy(
-//                web3j,
-//                credentials,
-//                GAS_PRICE,
-//                GAS_LIMIT).send().getContractAddress();
-        return com.example.blockchainappv2.Sc_test.deploy(web3j, credentials, new DefaultGasProvider()).send().getContractAddress();
-    }
-
-    private com.example.blockchainappv2.Sc_test loadContract(String deployedAddr, Web3j web3j, Credentials credentials){
-        return com.example.blockchainappv2.Sc_test.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
-    }
 }

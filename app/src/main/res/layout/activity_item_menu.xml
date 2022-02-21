@@ -97,6 +97,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
+
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
@@ -109,45 +112,45 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="Item1"
+                android:text="Item list"
                 android:textColor="@color/teal_700"
                 android:textSize="40sp"
                 android:textStyle="bold|italic" />
 
+<!--            <include layout="@layout/item"-->
+<!--                />-->
 
-            <RelativeLayout
-                android:id="@+id/itemInInventory"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:layout_below="@id/txtheading"
-                android:background="#CDCDCD">
 
-                <View
-                    android:id="@+id/topView"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray" />
+            <!--            <RelativeLayout-->
+            <!--                android:id="@+id/itemInInventory"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="100dp"-->
+            <!--                android:layout_below="@id/txtheading"-->
+            <!--                android:background="#CDCDCD">-->
 
-                <ImageView
-                    android:id="@+id/itemImage"
-                    android:layout_width="100dp"
-                    android:layout_height="99dp"
-                    android:layout_below="@+id/topView"
-                    android:layout_marginTop="1dp" />
+            <!--                <View-->
+            <!--                    android:id="@+id/topView"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="1dp"-->
+            <!--                    android:background="@android:color/darker_gray" />-->
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@id/itemImage"
-                    android:layout_marginTop="1dp"
-                    android:background="@android:color/darker_gray" />
-            </RelativeLayout>
+            <!--                <ImageView-->
+            <!--                    android:id="@+id/itemImage"-->
+            <!--                    android:layout_width="100dp"-->
+            <!--                    android:layout_height="99dp"-->
+            <!--                    android:layout_below="@+id/topView"-->
+            <!--                    android:layout_marginTop="1dp" />-->
+
+            <!--                <View-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="1dp"-->
+            <!--                    android:layout_below="@id/itemImage"-->
+            <!--                    android:layout_marginTop="1dp"-->
+            <!--                    android:background="@android:color/darker_gray" />-->
+            <!--            </RelativeLayout>-->
 
         </LinearLayout>
 
     </ScrollView>
-
-
-
 
 </RelativeLayout>

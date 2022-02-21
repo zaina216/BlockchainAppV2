@@ -6,13 +6,16 @@ import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
@@ -20,6 +23,7 @@ import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
 
 import java.math.BigInteger;
+import java.util.Random;
 
 public class ItemMenu extends AppCompatActivity {
 
@@ -42,7 +46,7 @@ public class ItemMenu extends AppCompatActivity {
     Credentials credentials = getCredentialsFromPrivateKey();
     Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
 
-    private ImageView mImageView;
+//    View mImageView = findViewById();
     int numOfItems=0;
 
     final int[] nftBal = new int[1];
@@ -56,8 +60,8 @@ public class ItemMenu extends AppCompatActivity {
             @Override
             public void run() {
 
-                mImageView = (ImageView) findViewById(R.id.itemImage);
-                mImageView.setImageResource(R.drawable.pop_cat);
+//                mImageView = (ImageView) findViewById(R.id.itemImage);
+//                mImageView.setImageResource(R.drawable.pop_cat);
 
 
             }
@@ -81,18 +85,25 @@ public class ItemMenu extends AppCompatActivity {
                 }
 
                 AppCompatButton btn = findViewById(R.id.startItemlist);
-                btn.performClick();
+//                btn.performClick();
+
+
 
             }
         });
         thread.start();
         System.out.println("bal: "+ nftBal[0]);
 
-        for(int i = 0; i < nftBal[0]; i++){
+        for(int i = 0; i < nftBal[0]; i++)
+        {
 
             LinearLayout rl = (LinearLayout) findViewById(R.id.bottom_part);
             LayoutInflater inflater = getLayoutInflater();
             View itemLayout = inflater.inflate(R.layout.item, rl, false);
+
+            // can set different values to the text fields in the item layout and then load them into the inventory layout.
+            ImageView imgv = itemLayout.findViewById(R.id.itemImage);
+
 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -125,24 +136,35 @@ public class ItemMenu extends AppCompatActivity {
         return com.example.blockchainappv2.Sc_test.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
     }
 
-    public void onClickAddLayout(View view) {
+    public void onClickAddLayout(View view)
+    {
 
         System.out.println("bal: "+ nftBal[0]);
 
-        if(addlayoutClicked){
+        if(addlayoutClicked)
+        {
             recreate();
         }
 
-        for(int i = 0; i < nftBal[0]; i++){
-
+        for(int i = 0; i < nftBal[0]; i++)
+        {
+            // can use this to set data to the item layout dynamically
             LinearLayout rl = (LinearLayout) findViewById(R.id.bottom_part);
             LayoutInflater inflater = getLayoutInflater();
             View itemLayout = inflater.inflate(R.layout.item, rl, false);
+            Random rnd = new Random();
+            int colour = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+            itemLayout.setBackgroundColor(colour);
+
+            TextView itemTitleTxt = itemLayout.findViewById(R.id.itemTitle);
+            //use strings when setting text
+            itemTitleTxt.setText(String.valueOf(i));
 
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
-            if (nftBal[0] != 0) {
+            if (nftBal[0] != 0)
+            {
                 params.addRule(RelativeLayout.BELOW, itemLayout.getId());
             }
 

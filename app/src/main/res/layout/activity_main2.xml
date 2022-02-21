@@ -21,102 +21,121 @@
         android:textStyle="bold|italic" />
 
     <EditText
-        android:id="@+id/editTxtName"
+        android:id="@+id/editUploadTxtName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtHello"
         android:layout_centerInParent="true"
         android:layout_marginHorizontal="82dp"
-        android:hint="name"
+        android:hint="private key"
+        android:minHeight="48dp"
         android:textColor="@color/teal_700" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnHi"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTxtName"
+        android:layout_below="@id/editUploadTxtName"
         android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
         android:background="#0C90B8"
         android:onClick="onClick"
         android:text="hi" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkRelLayout"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/btnHi">
+<!--    <RelativeLayout-->
+<!--        android:id="@+id/checkRelLayout"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/btnHi"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="20dp">-->
 
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="big fish"
-            android:id="@+id/bigFish" />
+<!--        <CheckBox-->
+<!--            android:id="@+id/bigFish"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="big fish" />-->
 
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/bigFish"
-            android:text="small pencil"
-            android:id="@+id/smallPencil" />
+<!--        <CheckBox-->
+<!--            android:id="@+id/smallPencil"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/bigFish"-->
+<!--            android:text="small pencil" />-->
 
-        <CheckBox
-            android:id="@+id/medSteak"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/bigFish"
-            android:layout_marginLeft="15dp"
-            android:layout_toRightOf="@id/smallPencil"
-            android:text="medium steak" />
-    </RelativeLayout>
+<!--        <CheckBox-->
+<!--            android:id="@+id/medSteak"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_below="@id/bigFish"-->
+<!--            android:layout_marginLeft="15dp"-->
+<!--            android:layout_toRightOf="@id/smallPencil"-->
+<!--            android:text="medium steak" />-->
+<!--    </RelativeLayout>-->
 
 
 
-    <RadioGroup
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/checkRelLayout"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"
-        android:orientation="vertical"
-        android:id="@+id/fishRadioGroup">
+<!--    <RadioGroup-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/checkRelLayout"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:orientation="vertical"-->
+<!--        android:id="@+id/fishRadioGroup">-->
 
-        <RadioButton
-            android:id="@+id/haveFish"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="have small fish" />
+<!--        <RadioButton-->
+<!--            android:id="@+id/haveFish"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="have small fish" />-->
 
-        <RadioButton
-            android:id="@+id/haveNoFish"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="have no small fish" />
+<!--        <RadioButton-->
+<!--            android:id="@+id/haveNoFish"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="have no small fish" />-->
 
-    </RadioGroup>
+<!--    </RadioGroup>-->
 
     <ImageView
         android:id="@+id/imageViewId"
         android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_below="@+id/fishRadioGroup">
+        android:layout_height="100dp">
 
     </ImageView>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:layout_width="wrap_content"
+        android:id="@+id/startItemUpload"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/checkRelLayout"
+        android:layout_below="@+id/btnHi"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:id="@+id/startItemlist"
+        android:layout_marginRight="20dp"
         android:background="#0C90B8"
-        android:onClick="newActivity"
-        android:text="okay then">
+        android:onClick="startItemUpload"
+        android:text="List new item">
 
     </androidx.appcompat.widget.AppCompatButton>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/startItemlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/startItemUpload"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:background="#0C90B8"
+        android:onClick="newActivity"
+        android:text="Inventory">
+
+    </androidx.appcompat.widget.AppCompatButton>
+
+
 
 
 </RelativeLayout>

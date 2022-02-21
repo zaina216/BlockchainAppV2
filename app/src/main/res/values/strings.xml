@@ -4,4 +4,7 @@
     <string name="item_description">Item description</string>
     <string name="item_name">Item name</string>
     <string name="upload_item">Upload item</string>
+    <string name="return_date">Return date</string>
+    <string name="list_tem">List tem</string>
+    <string name="list_item">List item</string>
 </resources>

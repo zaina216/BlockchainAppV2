@@ -35,7 +35,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.4.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    testImplementation 'junit:junit:4.+'
+    testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
@@ -45,6 +45,7 @@ dependencies {
     implementation("io.github.zinebfadili:pinata-java-sdk:2.1.0")
 //    implementation "com.github.ipld:java-cid:1.3.1"
     implementation("com.google.code.gson:gson:2.8.9")
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 //    implementation 'io.github.zinebfadili:pinata-java-sdk:2.1.0'
     // https://mvnrepository.com/artifact/com.github.ipld/java-cid
 //    implementation group: 'com.github.ipld', name: 'java-cid', version: '1.3.1'
@@ -57,5 +58,55 @@ dependencies {
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8//
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

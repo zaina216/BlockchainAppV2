@@ -16,13 +16,13 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
-        android:text="@string/upload_item"
+        android:text="@string/list_item"
         android:textColor="@color/teal_700"
         android:textSize="40sp"
         android:textStyle="bold|italic" />
 
     <EditText
-        android:id="@+id/editTxtName"
+        android:id="@+id/editUploadTxtName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtUploadheading"
@@ -33,13 +33,24 @@
         android:textColor="@color/teal_700" />
 
     <EditText
-        android:id="@+id/editTxtDesc"
+        android:id="@+id/editUploadTxtDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTxtName"
+        android:layout_below="@id/editUploadTxtName"
         android:layout_centerInParent="true"
         android:layout_marginHorizontal="82dp"
         android:hint="@string/item_description"
+        android:minHeight="48dp"
+        android:textColor="@color/teal_700" />
+
+    <EditText
+        android:id="@+id/dateToReturnBy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editUploadTxtDesc"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="82dp"
+        android:hint="@string/return_date"
         android:minHeight="48dp"
         android:textColor="@color/teal_700" />
 
@@ -47,11 +58,11 @@
         android:id="@+id/btnMint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTxtDesc"
+        android:layout_below="@id/dateToReturnBy"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:background="#0C90B8"
-        android:onClick="onClick"
+        android:onClick="onUploadClick"
         android:text="@string/mint_item" />
 
 </RelativeLayout>
