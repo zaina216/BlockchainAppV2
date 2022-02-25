@@ -63,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
 //    private final String CONTRACT_ADDRESS = "0x1b208c90e60EDb5c53f7580dDf23861cA08EBd00";
 //    private final String CONTRACT_ADDRESS = "0xb7b849e4b790906c9a2e2b1f6933e5403bad97c5";
     private final String CONTRACT_ADDRESS = "0x2100448fd5c91d5d28024561b23143f865d0f4a4";
-    private final String CONTRACT_ADDRESS_CHROME = "0x0bb2df51764ebcbf844498e81aba2bd1445a81c0";
+//    private final String CONTRACT_ADDRESS_CHROME = "0x0bb2df51764ebcbf844498e81aba2bd1445a81c0"; //Sc_test
+    private final String CONTRACT_ADDRESS_CHROME = "0xfeaa5fe401400505cfa259d780bd2062a854b13f"; //GetAllTokId
 
 
     Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
@@ -189,14 +190,19 @@ public class MainActivity extends AppCompatActivity {
 //                    System.out.println("_________________new contract address:" + deployedAddr + "_________________");
 //                            Log.d(TAG, deployedAddr); //Erc721: 0x279635563b42541A3372bCf0c75898211A6AE1Bd, ERC721deployable: 0xf9ec635edbc2c21f1e0ca1d68af8849bf38f6571
                     //ERC721DeployableAndMintable: 0x1b208c90e60EDb5c53f7580dDf23861cA08EBd00
-                  Sc_test nft = loadContract(CONTRACT_ADDRESS_CHROME, web3j, credentials);
+//                  Sc_test nft = loadContract(CONTRACT_ADDRESS_CHROME, web3j, credentials);
+
+                  GetAllTokId nft = loadContract(CONTRACT_ADDRESS_CHROME, web3j, credentials);
 
 //                  String n = nft.name().sendAsync().toString();
 
 //                  String n = nft.name().send();
 //                  Log.d(TAG, "name of NFT: " + n);
                     System.out.println("MINTING...");
-//                    String id = String.valueOf(nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723", "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
+//                    String id = String.valueOf(nft.mintUniqueToken(CONTRACT_ADDRESS_CHROME, "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
+//                    String id2 = String.valueOf(nft.mintUniqueToken(CONTRACT_ADDRESS_CHROME, "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
+//                    String id3 = String.valueOf(nft.mintUniqueToken(CONTRACT_ADDRESS_CHROME, "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
+//                    String id4 = String.valueOf(nft.mintUniqueToken(CONTRACT_ADDRESS_CHROME, "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
 
 
 //                            Type result = (Type) nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send();
@@ -206,7 +212,18 @@ public class MainActivity extends AppCompatActivity {
 //                    System.out.println("id: " + id);
 //                            nft.setName("ZUniqueToken").send();
 //                            nft.setSym("ZEXT").send();
-                    Log.d(TAG, nft.balanceOf("0xa7D7dF54C33E6579C9dE2AFF3dF86DD2F0723c28").send().toString());
+//                    Log.d(TAG, nft.balanceOf("0xa7D7dF54C33E6579C9dE2AFF3dF86DD2F0723c28").send().toString());
+
+                    int nftBal = Integer.parseInt(nft.balanceOf(CONTRACT_ADDRESS_CHROME).send().toString());
+                    Log.d(TAG, String.valueOf(nftBal));
+
+                    Log.d(TAG, nft.getTokenIds(CONTRACT_ADDRESS_CHROME).send().toString());
+
+                    for(int i = 0; i < 4; i++)
+                    {
+
+                    }
+
 //                    Log.d(TAG, "name:"+nft.name().send());
 //                    Log.d(TAG, "owner: "+ nft.ownerOf(BigInteger.valueOf(1)).send());
 //                    nft.transferFrom("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","0xa7D7dF54C33E6579C9dE2AFF3dF86DD2F0723c28",BigInteger.valueOf(4)).send();
@@ -340,8 +357,8 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private com.example.blockchainappv2.Sc_test loadContract(String deployedAddr, Web3j web3j, Credentials credentials){
-        return com.example.blockchainappv2.Sc_test.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
+    private GetAllTokId loadContract(String deployedAddr, Web3j web3j, Credentials credentials){
+        return GetAllTokId.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
     }
 
     private String deployContract(Web3j web3j, Credentials credentials) throws Exception {
@@ -350,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
 //                credentials,
 //                GAS_PRICE,
 //                GAS_LIMIT).send().getContractAddress();
-        return com.example.blockchainappv2.Sc_test.deploy(web3j, credentials, new DefaultGasProvider()).send().getContractAddress();
+        return GetAllTokId.deploy(web3j, credentials, new DefaultGasProvider()).send().getContractAddress();
     }
 
     private Bitmap getBitmapFromAsset(String strName)

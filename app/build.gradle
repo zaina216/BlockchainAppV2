@@ -52,6 +52,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.github.ipld/java-cid
 //    implementation 'com.github.ipld:java-cid:Tag'
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
 
 
 

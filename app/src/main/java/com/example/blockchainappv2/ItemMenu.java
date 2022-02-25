@@ -3,6 +3,7 @@ package com.example.blockchainappv2;
 import static org.web3j.tx.Transfer.GAS_LIMIT;
 import static org.web3j.tx.gas.DefaultGasProvider.GAS_PRICE;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
@@ -16,6 +17,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
@@ -174,6 +180,24 @@ public class ItemMenu extends AppCompatActivity {
         }
 
         nftBal[0]++;
+        barcodeLauncher.launch(new ScanOptions());
+    }
+
+
+
+    // Register the launcher and result handler
+    private final ActivityResultLauncher<ScanOptions> barcodeLauncher = registerForActivityResult(new ScanContract(),
+            result -> {
+                if(result.getContents() == null) {
+                    Toast.makeText(ItemMenu.this, "Cancelled", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(ItemMenu.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+    // Launch
+    public void onButtonClick(View view) {
+
     }
 }
 

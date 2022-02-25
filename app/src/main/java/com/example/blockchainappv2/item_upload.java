@@ -5,13 +5,17 @@ import static android.content.ContentValues.TAG;
 import androidx.appcompat.app.AppCompatActivity;
 
 //import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.zxing.BarcodeFormat;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
@@ -33,10 +37,11 @@ public class item_upload extends AppCompatActivity {
     private final BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
     private final BigInteger GAS_LIMIT = BigInteger.valueOf(6721975L);
 //    private final String CONTRACT_ADDRESS = "0x2100448fd5c91d5d28024561b23143f865d0f4a4";
-    private final String CONTRACT_ADDRESS = "0x6fe1f0c587cb02ae23c443d5bf899099eb341762";
+//    private final String CONTRACT_ADDRESS = "0x6fe1f0c587cb02ae23c443d5bf899099eb341762";
+    private final String CONTRACT_ADDRESS = "0xfeaa5fe401400505cfa259d780bd2062a854b13f";
     Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
     Credentials credentials = getCredentialsFromPrivateKey();
-    Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
+    GetAllTokId nft = loadContract(CONTRACT_ADDRESS, web3j, credentials);
 
     EditText editItemName;
     EditText editItemDesc;
@@ -68,58 +73,62 @@ public class item_upload extends AppCompatActivity {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-//
-//                    Pinata pinata = new Pinata("6296046404a96424609a", "a7d827beac22e26015680273dd8622af45f4733a51df75bf9f3dcd000affbf34");
-//                    PinataResponse authResponse = null;
-//                    try {
-//                        authResponse = pinata.testAuthentication();
-//                    } catch (PinataException | IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    assert authResponse != null;
-//                    System.out.println(authResponse.getStatus());
-//
-//                    PinataUploadClass pupload = new PinataUploadClass();
-//                    pupload.itemDesc = itemDesc;
-//                    pupload.itemName = itemName;
-//                    pupload.returnDate = returnDate;
-//
-//                    Gson gson = new Gson();
-//                    String json = gson.toJson(pupload);
-//                    System.out.println(json);
-//
-//                    writeToFile(json, "config.json");
-//
-//                    PinataResponse pinResponse = new PinataResponse();
-//
-//                    try {
-////                        pinResponse = pinata.pinFileToIpfs(new File("config.json"));
-//                        System.out.println("pinning file...");
-//                        pinResponse = pinata.pinFileToIpfs(getApplicationContext().openFileInput("config.json"), "config.json");
-//                        System.out.println("file pinned.");
-//
-//                    } catch (PinataException | IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                    System.out.println(pinResponse.getStatus());
-//                    System.out.println(pinResponse.getBody());
-//
-//                    gson = new Gson();
-//                    PinataResponseClass resp = gson.fromJson(pinResponse.getBody(), PinataResponseClass.class);
-//
-//                    System.out.println(resp.IpfsHash);
-//                    Log.d(TAG, resp.IpfsHash);
-//
-//                    String interwebAddress = "https://gateway.pinata.cloud/ipfs/" + resp.IpfsHash;
-//                    System.out.println("interwebAddress" + interwebAddress);
+
+                    Pinata pinata = new Pinata("6296046404a96424609a", "a7d827beac22e26015680273dd8622af45f4733a51df75bf9f3dcd000affbf34");
+                    PinataResponse authResponse = null;
+                    try {
+                        authResponse = pinata.testAuthentication();
+                    } catch (PinataException | IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    assert authResponse != null;
+                    System.out.println(authResponse.getStatus());
+
+                    PinataUploadClass pupload = new PinataUploadClass();
+                    pupload.itemDesc = itemDesc;
+                    pupload.itemName = itemName;
+                    pupload.returnDate = returnDate;
+
+                    Gson gson = new Gson();
+                    String json = gson.toJson(pupload);
+                    System.out.println(json);
+
+
+                    // get current unix time for filename uniqueness
+                    long unixTime = System.currentTimeMillis();
+                    writeToFile(json, "config.json");
+
+                    PinataResponse pinResponse = new PinataResponse();
+
+                    try {
+//                        pinResponse = pinata.pinFileToIpfs(new File("config.json"));
+                        System.out.println("pinning file...");
+                        pinResponse = pinata.pinFileToIpfs(getApplicationContext().openFileInput("config.json"), "config.json");
+                        System.out.println("file pinned.");
+
+                    } catch (PinataException | IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    System.out.println(pinResponse.getStatus());
+                    System.out.println(pinResponse.getBody());
+
+                    gson = new Gson();
+                    PinataResponseClass resp = gson.fromJson(pinResponse.getBody(), PinataResponseClass.class);
+
+                    System.out.println(resp.IpfsHash);
+                    Log.d(TAG, resp.IpfsHash);
+
+                    String interwebAddress = "https://gateway.pinata.cloud/ipfs/" + resp.IpfsHash;
+                    System.out.println("interwebAddress" + interwebAddress);
                     try {
                         System.out.println("minting token...");
-//                        nft.mintUniqueToken(CONTRACT_ADDRESS, interwebAddress).send();
+                        nft.mintUniqueToken(CONTRACT_ADDRESS, interwebAddress).send();
+                        Toast.makeText(item_upload.this, "item minted", Toast.LENGTH_LONG).show();
                         System.out.println("token minted...");
-                        System.out.println("uri of nft with pinata data:"+ nft.tokenURI(BigInteger.valueOf(1)).send());
-                        System.out.println("owner of nft with pinata data:"+ nft.ownerOf(BigInteger.valueOf(1)).send());
+//                        System.out.println("uri of nft with pinata data:"+ nft.tokenURI(BigInteger.valueOf(1)).send());
+//                        System.out.println("owner of nft with pinata data:"+ nft.ownerOf(BigInteger.valueOf(1)).send());
 //                        nft.transferFrom("0x6fe1f0c587cb02ae23c443d5bf899099eb341762", "0x2100448fd5c91d5d28024561b23143f865d0f4a4",BigInteger.valueOf(1)).send();
 
 
@@ -133,47 +142,23 @@ public class item_upload extends AppCompatActivity {
             });thread.start();
 
         }
+
+        try {
+            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+            Bitmap bitmap = barcodeEncoder.encodeBitmap("0x2100448fd5c91d5d28024561b23143f865d0f4a4", BarcodeFormat.QR_CODE, 400, 400);
+            ImageView imageViewQrCode = (ImageView) findViewById(R.id.qrCode);
+            imageViewQrCode.setImageBitmap(bitmap);
+        } catch(Exception e) {
+
+        }
     }
 
     private Credentials getCredentialsFromPrivateKey(){
         return Credentials.create(PRIVATE_KEY);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private com.example.blockchainappv2.Sc_test loadContract(String deployedAddr, Web3j web3j, Credentials credentials){
-        return com.example.blockchainappv2.Sc_test.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
+    private GetAllTokId loadContract(String deployedAddr, Web3j web3j, Credentials credentials){
+        return GetAllTokId.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
     }
 
 
@@ -191,7 +176,4 @@ public class item_upload extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
-
 }
