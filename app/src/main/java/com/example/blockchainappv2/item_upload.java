@@ -34,6 +34,7 @@ import pinata.PinataResponse;
 public class item_upload extends AppCompatActivity {
 
     private final String PRIVATE_KEY = "664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd";
+    private final String PRIVATE_KEY_CHROME = "35a49d01c8211b3f968371d429d32606bafe38dae4835aa93dfe4ea5dd17c8c9";
     private final BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
     private final BigInteger GAS_LIMIT = BigInteger.valueOf(6721975L);
 //    private final String CONTRACT_ADDRESS = "0x2100448fd5c91d5d28024561b23143f865d0f4a4";
@@ -97,14 +98,14 @@ public class item_upload extends AppCompatActivity {
 
                     // get current unix time for filename uniqueness
                     long unixTime = System.currentTimeMillis();
-                    writeToFile(json, "config.json");
+                    writeToFile(json, "config" + String.valueOf(unixTime) + ".json");
 
                     PinataResponse pinResponse = new PinataResponse();
 
                     try {
 //                        pinResponse = pinata.pinFileToIpfs(new File("config.json"));
                         System.out.println("pinning file...");
-                        pinResponse = pinata.pinFileToIpfs(getApplicationContext().openFileInput("config.json"), "config.json");
+                        pinResponse = pinata.pinFileToIpfs(getApplicationContext().openFileInput("config"+String.valueOf(unixTime)+".json"), "config"+String.valueOf(unixTime)+".json");
                         System.out.println("file pinned.");
 
                     } catch (PinataException | IOException e) {
@@ -148,8 +149,8 @@ public class item_upload extends AppCompatActivity {
             Bitmap bitmap = barcodeEncoder.encodeBitmap("0x2100448fd5c91d5d28024561b23143f865d0f4a4", BarcodeFormat.QR_CODE, 400, 400);
             ImageView imageViewQrCode = (ImageView) findViewById(R.id.qrCode);
             imageViewQrCode.setImageBitmap(bitmap);
-        } catch(Exception e) {
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

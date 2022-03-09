@@ -6,7 +6,8 @@
     <RelativeLayout
         android:id="@+id/itemInInventory"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="100dp"
+        android:background="@color/teal_200">
 
         <View
             android:id="@+id/topView"

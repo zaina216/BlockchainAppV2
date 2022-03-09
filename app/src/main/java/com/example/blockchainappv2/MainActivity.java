@@ -2,6 +2,15 @@ package com.example.blockchainappv2;
 //users can log in with their own private keys and access the smart contract
 //use a single smart contract to manage all transactions
 //can transfer using contract but contract doesn't know the token's in the other account
+
+// firefox address: 0x2412F42C68dDe2Ee49514975d3bEA066B1320723
+// firefox key: 664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd
+
+// chrome address: 0xa7D7dF54C33E6579C9dE2AFF3dF86DD2F0723c28
+// chrome key: 35a49d01c8211b3f968371d429d32606bafe38dae4835aa93dfe4ea5dd17c8c9
+
+//firefox_dev address: 0x28321A3929E33A0c8300ccBF2C825F6683C0F9d8
+//firefox_dev key: 40b0f86c631705c1e0754d1df04b4bc96ef593e499438036ba8e31cd757d09aa
 import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,7 +62,10 @@ import pinata.PinataResponse;
 public class MainActivity extends AppCompatActivity {
 
     private final String PRIVATE_KEY = "664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd";
-    private final String PRIVATE_KEY_CHROME = "35a49d01c8211b3f968371d429d32606bafe38dae4835aa93dfe4ea5dd17c8c9";
+    private final String PRIVATE_KEY_CHROME = "35a49d01c8211b3f968371d429d32606bafe38dae4835aa93dfe4ea5dd17c8c9"; //SMART CONTRACT'S VALUES ARE KEPT WITH DIFFERENT PRIVATE KEYS!!!!!
+    //use _transfer() method and
+
+
     //perhaps we can keep this key the same for every account
     //private final String PRIVATE_KEY = "ddfc78e76722eacbd5f9c4401fae889c7106b21abafa5cbe459a6048fa75c976";
     private final BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
@@ -218,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, String.valueOf(nftBal));
 
                     Log.d(TAG, nft.getTokenIds(CONTRACT_ADDRESS_CHROME).send().toString());
+                    Log.d(TAG, nft.owner().send());
 
                     for(int i = 0; i < 4; i++)
                     {
