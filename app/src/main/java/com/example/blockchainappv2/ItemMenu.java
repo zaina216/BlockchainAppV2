@@ -13,7 +13,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
@@ -31,15 +34,20 @@ import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.gas.DefaultGasProvider;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class ItemMenu extends AppCompatActivity {
 
-//    private final String PRIVATE_KEY = "664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd";
+    private final String PRIVATE_KEY = "664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd";
     //private final String PRIVATE_KEY = "ddfc78e76722eacbd5f9c4401fae889c7106b21abafa5cbe459a6048fa75c976";
-    private final String PRIVATE_KEY = "35a49d01c8211b3f968371d429d32606bafe38dae4835aa93dfe4ea5dd17c8c9";
+//    private final String PRIVATE_KEY = "35a49d01c8211b3f968371d429d32606bafe38dae4835aa93dfe4ea5dd17c8c9";
 
     private final BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
     private final BigInteger GAS_LIMIT = BigInteger.valueOf(6721975L);
@@ -70,6 +78,7 @@ public class ItemMenu extends AppCompatActivity {
     List nftIDs = null;
     int i = 0;
     String nftMetaData = "";
+    ArrayList<String> itemNames = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +107,8 @@ public class ItemMenu extends AppCompatActivity {
 
                 try {
                     nftBal[0] = Integer.parseInt(nft.balanceOf("0x2412F42C68dDe2Ee49514975d3bEA066B1320723").send().toString());
-
+                    nftBala = Integer.parseInt(nft.balanceOf(CONTRACT_ADDRESS_CHROME).send().toString());
+                    nftIDs = nft.getTokenIds(CONTRACT_ADDRESS_CHROME).send();
 //                    System.out.println(nftBal[0]);
 
                 } catch (Exception e) {
@@ -131,30 +141,37 @@ public class ItemMenu extends AppCompatActivity {
 //                    rl.addView(itemLayout, params);
 //                }
 
-                try {
-                    nftBala = Integer.parseInt(nft.balanceOf(CONTRACT_ADDRESS_CHROME).send().toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Log.d(TAG, "Balance inside thread" + nftBala);
-
-                try {
-                    nftIDs = nft.getTokenIds(CONTRACT_ADDRESS_CHROME).send();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                Log.d(TAG, "ID list inside thread" + nftIDs.toString());
+//                try {
+//                    nftBala = Integer.parseInt(nft.balanceOf(CONTRACT_ADDRESS_CHROME).send().toString());
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                Log.d(TAG, "Balance inside thread" + nftBala);
+//
+//                try {
+//                    nftIDs = nft.getTokenIds(CONTRACT_ADDRESS_CHROME).send();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//                Log.d(TAG, "ID list inside thread" + nftIDs.toString());
 
             }
         });
         thread.start();
-//        System.out.println("bal: "+ nftBal[0]);
 
+        RelativeLayout rl = (RelativeLayout) findViewById(R.id.itemInInventory);
+//        itemNames.add("a");
 
-
-//        nftBala[0]++;
-
+//        rl.setOnLongClickListener(new View.OnLongClickListener() {
+//
+//            @Override
+//            public boolean onLongClick(View v) {
+//                Toast.makeText(ItemMenu.this, "Long click!", Toast.LENGTH_SHORT).show();
+//                return true;
+//            }
+//
+//        });
     }
 
     private Credentials getCredentialsFromPrivateKey(){
@@ -174,9 +191,11 @@ public class ItemMenu extends AppCompatActivity {
         return GetAllTokId.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
     }
 
-
-    public void onClickAddLayout(View view)
-    {
+    URL url = null;
+    PinataUploadClass puc;
+    PinataUploadClass[] apuc;
+    Gson gson = new Gson();
+    public void onClickAddLayout(View view) throws IOException {
 //        Thread thread  = new Thread(new Runnable()
 //        {
 //            @Override
@@ -202,18 +221,18 @@ public class ItemMenu extends AppCompatActivity {
 //            }
 //        });
 //        thread.start();
-        if(addlayoutClicked)
-        {
-            recreate();
-        }
+//        if(addlayoutClicked)
+//        {
+//            recreate();
+//        }
 
         for(i = 0; i < nftBala; i++)
         {
-            System.out.println("here");
+//            System.out.println("here");
             // can use this to set data to the item layout dynamically
             LinearLayout rl = (LinearLayout) findViewById(R.id.bottom_part);
             LayoutInflater inflater = getLayoutInflater();
-            View itemLayout = inflater.inflate(R.layout.item, rl, false);
+            View itemLayout = inflater.inflate(R.layout.item , rl, false);
             Random rnd = new Random();
 //            int colour = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
 //            itemLayout.setBackgroundColor(colour);
@@ -226,18 +245,39 @@ public class ItemMenu extends AppCompatActivity {
                 @Override
                 public void run() {
                     try {
-
                         nftMetaData = nft.tokenURI( (BigInteger)nftIDs.get(i) ).send();
 
+//                        String json = readUrl(nftMetaData);
+//
+//                        Gson gson = new Gson();
+//                        puc = gson.fromJson(json, PinataUploadClass.class);
+//                        itemNames.add(puc.itemName);
+//
+//                        System.out.println(puc.itemName);
+
+//                        url = new URL(nftMetaData);
+//                        System.out.println("in thread - " + url);
+//                        InputStreamReader reader = new InputStreamReader(url.openStream());
+//                        puc = gson.fromJson(reader, PinataUploadClass.class);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             });
             thread2.start();
+            try {
+                thread2.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+
+//            URL
+
+
             System.out.println(nftMetaData);
-//
-            itemTitleTxt.setText( nftMetaData );
+
+            itemTitleTxt.setText( nftMetaData);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
@@ -245,32 +285,48 @@ public class ItemMenu extends AppCompatActivity {
             {
                 params.addRule(RelativeLayout.BELOW, itemLayout.getId());
             }
-
             rl.addView(itemLayout, params);
-
             addlayoutClicked = true;
         }
-
         i = 0;
-
 //        barcodeLauncher.launch(new ScanOptions());
     }
 
+    private static String readUrl(String urlString) throws Exception {
+        BufferedReader reader = null;
+        try {
+            URL url = new URL(urlString);
+            reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            StringBuffer buffer = new StringBuffer();
+            int read;
+            char[] chars = new char[1024];
+            while ((read = reader.read(chars)) != -1)
+                buffer.append(chars, 0, read);
+
+            return buffer.toString();
+        } finally {
+            if (reader != null)
+                reader.close();
+        }
+    }
     // Create barcode scanning event and initialise camera
-    private final ActivityResultLauncher<ScanOptions> launchBarCam = registerForActivityResult(new ScanContract(),
-        new ActivityResultCallback<ScanIntentResult>() {
-            @Override
-            public void onActivityResult(ScanIntentResult result) {
-                if (result.getContents() == null) {
-                    Toast.makeText(ItemMenu.this, "Exception", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(ItemMenu.this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-                }
-            }
-        });
+
 
     // Launch
     public void onButtonClick(View view) {
 
+    }
+
+    public void bruh(View view) {
+
+    }
+    final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
+        public void onLongPress(MotionEvent e) {
+            Log.d("", "Longpress detected");
+        }
+    });
+
+    public boolean onTouchEvent(MotionEvent event) {
+        return gestureDetector.onTouchEvent(event);
     }
 }

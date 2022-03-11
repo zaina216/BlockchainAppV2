@@ -98,14 +98,14 @@ public class item_upload extends AppCompatActivity {
 
                     // get current unix time for filename uniqueness
                     long unixTime = System.currentTimeMillis();
-                    writeToFile(json, "config" + String.valueOf(unixTime) + ".json");
+                    writeToFile(json, "config" + unixTime + ".json");
 
                     PinataResponse pinResponse = new PinataResponse();
 
                     try {
 //                        pinResponse = pinata.pinFileToIpfs(new File("config.json"));
                         System.out.println("pinning file...");
-                        pinResponse = pinata.pinFileToIpfs(getApplicationContext().openFileInput("config"+String.valueOf(unixTime)+".json"), "config"+String.valueOf(unixTime)+".json");
+                        pinResponse = pinata.pinFileToIpfs(getApplicationContext().openFileInput("config"+ unixTime +".json"), "config"+ unixTime +".json");
                         System.out.println("file pinned.");
 
                     } catch (PinataException | IOException e) {
@@ -117,8 +117,6 @@ public class item_upload extends AppCompatActivity {
 
                     gson = new Gson();
                     PinataResponseClass resp = gson.fromJson(pinResponse.getBody(), PinataResponseClass.class);
-
-                    System.out.println(resp.IpfsHash);
                     Log.d(TAG, resp.IpfsHash);
 
                     String interwebAddress = "https://gateway.pinata.cloud/ipfs/" + resp.IpfsHash;
@@ -126,7 +124,7 @@ public class item_upload extends AppCompatActivity {
                     try {
                         System.out.println("minting token...");
                         nft.mintUniqueToken(CONTRACT_ADDRESS, interwebAddress).send();
-                        Toast.makeText(item_upload.this, "item minted", Toast.LENGTH_LONG).show();
+//                        Toast.makeText(item_upload.this, "item minted", Toast.LENGTH_LONG).show(); //cannot toast on this thread
                         System.out.println("token minted...");
 //                        System.out.println("uri of nft with pinata data:"+ nft.tokenURI(BigInteger.valueOf(1)).send());
 //                        System.out.println("owner of nft with pinata data:"+ nft.ownerOf(BigInteger.valueOf(1)).send());
@@ -144,14 +142,7 @@ public class item_upload extends AppCompatActivity {
 
         }
 
-        try {
-            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.encodeBitmap("0x2100448fd5c91d5d28024561b23143f865d0f4a4", BarcodeFormat.QR_CODE, 400, 400);
-            ImageView imageViewQrCode = (ImageView) findViewById(R.id.qrCode);
-            imageViewQrCode.setImageBitmap(bitmap);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
     }
 
     private Credentials getCredentialsFromPrivateKey(){

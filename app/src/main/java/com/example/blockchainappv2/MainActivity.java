@@ -126,10 +126,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
-
         Credentials dummyCredentials = Credentials.create(keys);
-
         {
             try {
                 dummyCredentials = Credentials.create(Keys.createEcKeyPair());
@@ -180,6 +177,11 @@ public class MainActivity extends AppCompatActivity {
 
         // When clicked, button starts item upload activity
         Intent intent = new Intent(this, item_upload.class);
+        startActivity(intent);
+    }
+
+    public void startItemReceive(View view) {
+        Intent intent = new Intent(this, receiveItem.class);
         startActivity(intent);
     }
 
@@ -435,5 +437,6 @@ public class MainActivity extends AppCompatActivity {
                 GAS_LIMIT
         ).send();
     }
+
 
 }

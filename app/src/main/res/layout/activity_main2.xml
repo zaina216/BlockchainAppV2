@@ -127,11 +127,39 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/startItemUpload"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
         android:background="#0C90B8"
         android:onClick="newActivity"
         android:text="Inventory">
+
+    </androidx.appcompat.widget.AppCompatButton>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/sendItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/startItemlist"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#0C90B8"
+        android:onClick="startItemReceive"
+        android:text="Send">
+
+    </androidx.appcompat.widget.AppCompatButton>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/receiveItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sendItem"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#0C90B8"
+        android:onClick="startItemReceive"
+        android:text="Receive">
 
     </androidx.appcompat.widget.AppCompatButton>
 
