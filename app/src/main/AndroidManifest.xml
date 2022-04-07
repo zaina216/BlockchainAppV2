@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:hardwareAccelerated="true"
@@ -13,23 +17,41 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BlockchainAppV2">
+        android:theme="@style/Theme.BlockchainAppV2"
+        android:screenOrientation="portrait">
+        <activity
+            android:name=".passwordEntry"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".create_wallet"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".trWindow"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".item"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".receiveItem"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".item_upload"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ItemMenu"
             android:exported="false"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -82,6 +82,18 @@
             android:onClick="onClickAddLayout"
             android:text="addLayout" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/trBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/acctDeets"
+            android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toRightOf="@id/addLayout"
+            android:background="#0C90B8"
+            android:onClick="transferToAccount"
+            android:text="send" />
+
     </RelativeLayout>
 
 

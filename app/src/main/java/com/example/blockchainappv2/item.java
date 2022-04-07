@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 
 public class item extends AppCompatActivity {
 
@@ -27,4 +28,5 @@ public class item extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         return gestureDetector.onTouchEvent(event);
     }
+
 }

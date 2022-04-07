@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -22,9 +23,13 @@ public class receiveItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive_item);
 
+        // create the get Intent object
+        Intent pubAddr = getIntent();
+        String contents = pubAddr.getStringExtra("pubAddr");
+
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.encodeBitmap("0x2100448fd5c91d5d28024561b23143f865d0f4a4", BarcodeFormat.QR_CODE, 400, 400);
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(contents, BarcodeFormat.QR_CODE, 400, 400);
             ImageView imageViewQrCode = (ImageView) findViewById(R.id.qrCode);
             imageViewQrCode.setImageBitmap(bitmap);
         } catch (Exception e) {

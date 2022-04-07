@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.ScanContract;
 import com.journeyapps.barcodescanner.ScanIntentResult;
 import com.journeyapps.barcodescanner.ScanOptions;
+import com.squareup.picasso.Picasso;
 
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
@@ -38,6 +40,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +82,8 @@ public class ItemMenu extends AppCompatActivity {
     int i = 0;
     String nftMetaData = "";
     ArrayList<String> itemNames = new ArrayList<>();
+    ArrayList<String> imageLinks = new ArrayList<>();
+    AppCompatButton trBtn = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +94,7 @@ public class ItemMenu extends AppCompatActivity {
             @Override
             public void run() {
 
-//                mImageView = (ImageView) findViewById(R.id.itemImage);
+//                trBtn = (AppCompatButton) findViewById(R.id.transferButton);
 //                mImageView.setImageResource(R.drawable.pop_cat);
 
 
@@ -107,8 +112,8 @@ public class ItemMenu extends AppCompatActivity {
 
                 try {
                     nftBal[0] = Integer.parseInt(nft.balanceOf("0x2412F42C68dDe2Ee49514975d3bEA066B1320723").send().toString());
-                    nftBala = Integer.parseInt(nft.balanceOf(CONTRACT_ADDRESS_CHROME).send().toString());
-                    nftIDs = nft.getTokenIds(CONTRACT_ADDRESS_CHROME).send();
+                    nftBala = Integer.parseInt(nft.balanceOf("0x2412F42C68dDe2Ee49514975d3bEA066B1320723").send().toString());
+                    nftIDs = nft.getTokenIds("0x2412F42C68dDe2Ee49514975d3bEA066B1320723").send();
 //                    System.out.println(nftBal[0]);
 
                 } catch (Exception e) {
@@ -160,7 +165,7 @@ public class ItemMenu extends AppCompatActivity {
         });
         thread.start();
 
-        RelativeLayout rl = (RelativeLayout) findViewById(R.id.itemInInventory);
+//        RelativeLayout rl = (RelativeLayout) findViewById(R.id.itemInInventory);
 //        itemNames.add("a");
 
 //        rl.setOnLongClickListener(new View.OnLongClickListener() {
@@ -195,36 +200,13 @@ public class ItemMenu extends AppCompatActivity {
     PinataUploadClass puc;
     PinataUploadClass[] apuc;
     Gson gson = new Gson();
+    TextView itemTitleTxt = null;
+    ImageView itemImg = null;
     public void onClickAddLayout(View view) throws IOException {
-//        Thread thread  = new Thread(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-////                int nftBala = 0;
-//                try {
-//                    nftBala = Integer.parseInt(nft.balanceOf(CONTRACT_ADDRESS_CHROME).send().toString());
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//                Log.d(TAG, "Balance inside thread" + nftBala);
-//
-//                try {
-//                    nftIDs = nft.getTokenIds(CONTRACT_ADDRESS_CHROME).send();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//                Log.d(TAG, "ID list inside thread" + nftIDs.toString());
-//
-//
-//            }
-//        });
-//        thread.start();
-//        if(addlayoutClicked)
-//        {
-//            recreate();
-//        }
+
+        itemNames = new ArrayList<>();
+        System.out.println("pressed button");
+        ProgressDialog mDialog = new ProgressDialog(getApplicationContext());
 
         for(i = 0; i < nftBala; i++)
         {
@@ -233,11 +215,15 @@ public class ItemMenu extends AppCompatActivity {
             LinearLayout rl = (LinearLayout) findViewById(R.id.bottom_part);
             LayoutInflater inflater = getLayoutInflater();
             View itemLayout = inflater.inflate(R.layout.item , rl, false);
-            Random rnd = new Random();
-//            int colour = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-//            itemLayout.setBackgroundColor(colour);
 
-            TextView itemTitleTxt = itemLayout.findViewById(R.id.itemTitle);
+            view.setId(i);
+            System.out.println(view.getId());
+            Random rnd = new Random();
+            int colour = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+            itemLayout.setBackgroundColor(colour);
+
+            itemTitleTxt = itemLayout.findViewById(R.id.itemTitle);
+            itemImg = itemLayout.findViewById(R.id.itemImage);
             //use strings when setting text
             assert nftIDs != null;
 
@@ -247,39 +233,45 @@ public class ItemMenu extends AppCompatActivity {
                     try {
                         nftMetaData = nft.tokenURI( (BigInteger)nftIDs.get(i) ).send();
 
-//                        String json = readUrl(nftMetaData);
-//
-//                        Gson gson = new Gson();
-//                        puc = gson.fromJson(json, PinataUploadClass.class);
-//                        itemNames.add(puc.itemName);
-//
-//                        System.out.println(puc.itemName);
+                        String json = readUrl(nftMetaData);
+                        Gson gson = new Gson();
+                        if(!nftMetaData.contains("typicode"))
+                        {
+                            System.out.println("continuing in thread");
+                            puc = gson.fromJson(json, PinataUploadClass.class);
+                        }
 
-//                        url = new URL(nftMetaData);
-//                        System.out.println("in thread - " + url);
-//                        InputStreamReader reader = new InputStreamReader(url.openStream());
-//                        puc = gson.fromJson(reader, PinataUploadClass.class);
+
+                        itemNames.add(puc.itemDesc);
+                        if(puc.imgLink == null || puc.imgLink.equals("")){
+                            puc.imgLink = "https://avatarfiles.alphacoders.com/108/thumb-108917.png";
+//                            puc.imgLink = "https://gateway.pinata.cloud/ipfs/QmZxgiPJWHwJ9Ja9YYfzQYgcEmkKaVdPs32xRoQQFsBVa1";
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             });
-            thread2.start();
+
             try {
+                thread2.start();
                 thread2.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
 
-//            URL
-
-
-            System.out.println(nftMetaData);
-
-            itemTitleTxt.setText( nftMetaData);
+            System.out.println("outside thread-" +  itemNames);
+            if(nftMetaData.contains("typicode"))
+            {
+                System.out.println("continuing");
+                continue;
+            }
+            itemTitleTxt.setText(new StringBuilder().append("Item ID - ").append(nftIDs.get(i)).append(", Item name - ").append(itemNames.get(itemNames.size() - 1)).toString());
+            Picasso.get().load(puc.imgLink).into(itemImg);
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
 
             if (nftBala != 0)
             {
@@ -289,13 +281,15 @@ public class ItemMenu extends AppCompatActivity {
             addlayoutClicked = true;
         }
         i = 0;
-//        barcodeLauncher.launch(new ScanOptions());
+        System.out.println("fin");
     }
 
     private static String readUrl(String urlString) throws Exception {
         BufferedReader reader = null;
         try {
             URL url = new URL(urlString);
+//            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//            System.out.println("code - "+conn.getResponseCode());
             reader = new BufferedReader(new InputStreamReader(url.openStream()));
             StringBuffer buffer = new StringBuffer();
             int read;
@@ -309,24 +303,22 @@ public class ItemMenu extends AppCompatActivity {
                 reader.close();
         }
     }
-    // Create barcode scanning event and initialise camera
 
 
-    // Launch
-    public void onButtonClick(View view) {
+    public void trItem(View view) {
 
+//        view.findViewById()
+        View v = ((View)view.getParent());
+        int id = v.getId();
+        System.out.println(id);
+//        View v = findViewById(view.getId());
+//        TextView tv = view.findViewById(R.id.itemTitle);
+//        System.out.println(tv.getText().toString());
     }
 
-    public void bruh(View view) {
-
-    }
-    final GestureDetector gestureDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
-        public void onLongPress(MotionEvent e) {
-            Log.d("", "Longpress detected");
-        }
-    });
-
-    public boolean onTouchEvent(MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
+    public void transferToAccount(View view) {
+        Intent intent = new Intent(this, trWindow.class);
+        intent.putExtra("id", nftBala);
+        startActivity(intent);
     }
 }

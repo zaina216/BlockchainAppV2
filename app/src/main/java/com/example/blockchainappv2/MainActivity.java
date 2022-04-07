@@ -11,31 +11,42 @@ package com.example.blockchainappv2;
 
 //firefox_dev address: 0x28321A3929E33A0c8300ccBF2C825F6683C0F9d8
 //firefox_dev key: 40b0f86c631705c1e0754d1df04b4bc96ef593e499438036ba8e31cd757d09aa
-import static android.provider.AlarmClock.EXTRA_MESSAGE;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.w3c.dom.Text;
-import org.web3j.abi.datatypes.Type;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+import org.web3j.abi.EventEncoder;
+import org.web3j.abi.TypeReference;
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Event;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.crypto.CipherException;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
+import org.web3j.crypto.Hash;
 import org.web3j.crypto.Keys;
+import org.web3j.crypto.Wallet;
 import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.request.EthFilter;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
@@ -45,8 +56,15 @@ import org.web3j.tx.Transfer;
 import org.web3j.tx.gas.DefaultGasProvider;
 import org.web3j.utils.Convert;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
@@ -54,7 +72,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Provider;
 import java.security.Security;
+import java.util.Arrays;
+import java.util.List;
 
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import pinata.Pinata;
 import pinata.PinataException;
 import pinata.PinataResponse;
@@ -62,9 +84,8 @@ import pinata.PinataResponse;
 public class MainActivity extends AppCompatActivity {
 
     private final String PRIVATE_KEY = "664899c672b95434dc0dc6f99baa95701f36d9dfe412d061626d4117ae2e5ffd";
-    private final String PRIVATE_KEY_CHROME = "35a49d01c8211b3f968371d429d32606bafe38dae4835aa93dfe4ea5dd17c8c9"; //SMART CONTRACT'S VALUES ARE KEPT WITH DIFFERENT PRIVATE KEYS!!!!!
+    private String PRIVATE_KEY_CHROME = "35a49d01c8211b3f968371d429d32606bafe38dae4835aa93dfe4ea5dd17c8c9"; //SMART CONTRACT'S VALUES ARE KEPT WITH DIFFERENT PRIVATE KEYS!!!!!
     //use _transfer() method and
-
 
     //perhaps we can keep this key the same for every account
     //private final String PRIVATE_KEY = "ddfc78e76722eacbd5f9c4401fae889c7106b21abafa5cbe459a6048fa75c976";
@@ -77,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
     private final String CONTRACT_ADDRESS = "0x2100448fd5c91d5d28024561b23143f865d0f4a4";
 //    private final String CONTRACT_ADDRESS_CHROME = "0x0bb2df51764ebcbf844498e81aba2bd1445a81c0"; //Sc_test
     private final String CONTRACT_ADDRESS_CHROME = "0xfeaa5fe401400505cfa259d780bd2062a854b13f"; //GetAllTokId
+
+    private String pubAddr = "";
 
 
     Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
@@ -108,40 +131,108 @@ public class MainActivity extends AppCompatActivity {
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
-    public Credentials createCredentialsUsingEcPair(){
-        setupBouncyCastle();
 
-        ECKeyPair keys = null;
-
-        {
-            try {
-                keys = Keys.createEcKeyPair();
-                System.out.println("keys created");
-            } catch (InvalidAlgorithmParameterException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (NoSuchProviderException e) {
-                e.printStackTrace();
-            }
-        }
-
-        Credentials dummyCredentials = Credentials.create(keys);
-        {
-            try {
-                dummyCredentials = Credentials.create(Keys.createEcKeyPair());
-            } catch (InvalidAlgorithmParameterException | NoSuchAlgorithmException | NoSuchProviderException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return dummyCredentials;
-    }
-
+    Credentials walletCreds;
+    String[] userData = new String[3]; //[filename, password]
+    boolean passwordEntered = false;
+    @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        setupBouncyCastle();
+
+        EthFilter filter = new EthFilter(DefaultBlockParameterName.EARLIEST,
+                DefaultBlockParameterName.LATEST, "0xfeaa5fe401400505cfa259d780bd2062a854b13f");
+//        new Event(
+//        Event event = new Event("Transfer", Arrays.asList());
+        Event event = new Event("Transfer", Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Uint256>(true) {}));
+        String encodedEventSignature = EventEncoder.encode(event);
+        filter.addSingleTopic(encodedEventSignature);
+
+
+        Thread eventThr = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                web3j.ethLogFlowable(filter).subscribe(new Consumer<org.web3j.protocol.core.methods.response.Log>() {
+                    @Override
+                    public void accept(org.web3j.protocol.core.methods.response.Log event) throws Exception {
+                        System.out.println("event = " + event);//();
+                        System.out.println("____________________\n");
+                    }
+                });
+//                web3j.ethLogFlowable(filter).safeSubscribe(new Subscriber<org.web3j.protocol.core.methods.response.Log>() {
+//                       @Override
+//                       public void onSubscribe(Subscription s) {
+//                           System.out.println("1");
+//                       }
+//
+//                       @Override
+//                       public void onNext(org.web3j.protocol.core.methods.response.Log log) {
+//                           System.out.println("log - " + log.toString());
+//                       }
+//
+//                       @Override
+//                       public void onError(Throwable t) {
+//                           t.printStackTrace();
+//                       }
+//
+//                       @Override
+//                       public void onComplete() {
+//                           System.out.println("4");
+//                       }
+//                   }
+//                );
+            }
+        });
+
+        try{
+            eventThr.start();
+            eventThr.join();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        // create the get Intent object
+        Intent pwdEntry = getIntent();
+
+        // receive the value by getStringExtra() method
+        // and key must be same which is send by first activity
+        pubAddr = pwdEntry.getStringExtra("publicAddr");
+        PRIVATE_KEY_CHROME = pwdEntry.getStringExtra("privkey");
+        passwordEntered = pwdEntry.getBooleanExtra("enteredPassword", false);
+        System.out.println(pubAddr);
+        System.out.println(passwordEntered);
+//
+//        //check if a wallet information file exists
+//        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+//        ImageData imgdat = new ImageData();
+//        // path to /data/data/yourapp/app_data/imageDir
+//        File directory = cw.getDir("infoDir", Context.MODE_PRIVATE);
+
+        File file = new File(getApplicationContext().getFilesDir(),"walletDir");
+        if(!file.isDirectory()){
+            //Do something
+            Intent intent = new Intent(this, create_wallet.class);
+            startActivity(intent);
+        } else if (!passwordEntered) {
+            // enter your password
+            // load in enter password activity
+            // send wallet there
+            // send public address back
+
+            Intent intent = new Intent(this, passwordEntry.class);
+            startActivity(intent);
+
+        }
+
+//        if(!directory.exists()){
+//            //User needs to create a new wallet (account). They'll be shown a password field.
+//            System.out.println();
+//        }
+
 //        Credentials dummyCredentials = createCredentialsUsingEcPair();
 //        Sc_test nft = loadContract(CONTRACT_ADDRESS, web3j, dummyCredentials);
 //
@@ -155,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                }
-//
 //            }
 //        });
 //        thread.start();
@@ -177,19 +267,41 @@ public class MainActivity extends AppCompatActivity {
 
         // When clicked, button starts item upload activity
         Intent intent = new Intent(this, item_upload.class);
+        intent.putExtra("privK", PRIVATE_KEY_CHROME);
         startActivity(intent);
     }
 
     public void startItemReceive(View view) {
         Intent intent = new Intent(this, receiveItem.class);
+        intent.putExtra("pubAddr", pubAddr);
         startActivity(intent);
     }
 
     public MainActivity(){
 
     }
+//    TextView usrEthAddr = (TextView) findViewById(R.id.editDeclareEthAddr);
+    public void writeFileOnInternalStorage(Context mcoContext, String sFileName, String sBody){
+        File dir = new File(mcoContext.getFilesDir(), "mydir");
+        if(!dir.exists()){
+            dir.mkdir();
+        }
+    }
 
+    @SuppressLint("CheckResult")
     public void onClick(View view) {
+//        try {
+//            ContextWrapper cw = new ContextWrapper(getApplicationContext());
+//            // path to /data/data/yourapp/app_data/imageDir
+//            File directory = cw.getDir("walletDir", Context.MODE_PRIVATE);
+//            walletCreds = WalletUtils.loadCredentials(userData[1], directory + "/" + userData[0]);
+//            System.out.println("wallet credentials output - " + walletCreds.getEcKeyPair().getPublicKey());
+//            System.out.println("Public address - " + walletCreds.getAddress());
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
         Web3j web3j = Web3j.build(new HttpService("https://rinkeby.infura.io/v3/292bf993eaf9433594b8926593cfd04c"));
 //                Web3j web3j = Web3j.build(new HttpService("http://192.168.1.108:8545"));
 //        Credentials credentials = createCredentialsUsingEcPair();
@@ -208,19 +320,33 @@ public class MainActivity extends AppCompatActivity {
 
                   GetAllTokId nft = loadContract(CONTRACT_ADDRESS_CHROME, web3j, credentials);
 
+
+                    nft.transferEventFlowable(DefaultBlockParameterName.EARLIEST, DefaultBlockParameterName.LATEST)
+                            .subscribe(event
+                                    -> System.out.println("from: " + event.from + ", to: " + event.to + ", value: " + event.tokenId));
+
 //                  String n = nft.name().sendAsync().toString();
 
 //                  String n = nft.name().send();
 //                  Log.d(TAG, "name of NFT: " + n);
                     System.out.println("MINTING...");
-//                    String id = String.valueOf(nft.mintUniqueToken(CONTRACT_ADDRESS_CHROME, "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
+//                    String id = String.valueOf(nft.mintUniqueToken("0xb8a16a1743783c087d51c8048faaaf9680d6cf8e", "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
 //                    String id2 = String.valueOf(nft.mintUniqueToken(CONTRACT_ADDRESS_CHROME, "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
 //                    String id3 = String.valueOf(nft.mintUniqueToken(CONTRACT_ADDRESS_CHROME, "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
 //                    String id4 = String.valueOf(nft.mintUniqueToken(CONTRACT_ADDRESS_CHROME, "https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send());
-
-
-//                            Type result = (Type) nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send();
                     System.out.println("MINT COMPLETE");
+                    List tokens = nft.getTokenIds("0xb8a16a1743783c087d51c8048faaaf9680d6cf8e").send();
+                    System.out.println(nft.getTokenIds("0xb8a16a1743783c087d51c8048faaaf9680d6cf8e").send());
+//                            Type result = (Type) nft.mintUniqueToken("0x2412F42C68dDe2Ee49514975d3bEA066B1320723","https://my-json-server.typicode.com/abcoathup/samplenft/tokens/").send();
+//                    try{
+//                        nft.setApprovalForAll("0x2412F42C68dDe2Ee49514975d3bEA066B1320723", true);
+//                        nft.transferFrom("0xb8a16a1743783c087d51c8048faaaf9680d6cf8e", "0x28321A3929E33A0c8300ccBF2C825F6683C0F9d8", (BigInteger) tokens.get(0)).send();
+//                    } catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                    System.out.println("TRANSFERRED");
+                    System.out.println("new owner of token - " + nft.getTokenIds("0x28321A3929E33A0c8300ccBF2C825F6683C0F9d8").send());
+
 //
 //                            System.out.println(result.getTypeAsString());
 //                    System.out.println("id: " + id);
@@ -228,16 +354,12 @@ public class MainActivity extends AppCompatActivity {
 //                            nft.setSym("ZEXT").send();
 //                    Log.d(TAG, nft.balanceOf("0xa7D7dF54C33E6579C9dE2AFF3dF86DD2F0723c28").send().toString());
 
-                    int nftBal = Integer.parseInt(nft.balanceOf(CONTRACT_ADDRESS_CHROME).send().toString());
-                    Log.d(TAG, String.valueOf(nftBal));
+                    int nftBal = Integer.parseInt(nft.balanceOf("0xb8a16a1743783c087d51c8048faaaf9680d6cf8e").send().toString());
+                    Log.d(TAG, "Balance - " + nftBal);
 
                     Log.d(TAG, nft.getTokenIds(CONTRACT_ADDRESS_CHROME).send().toString());
                     Log.d(TAG, nft.owner().send());
 
-                    for(int i = 0; i < 4; i++)
-                    {
-
-                    }
 
 //                    Log.d(TAG, "name:"+nft.name().send());
 //                    Log.d(TAG, "owner: "+ nft.ownerOf(BigInteger.valueOf(1)).send());
@@ -266,8 +388,10 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
 
 
-                        mImageView = (ImageView) findViewById(R.id.imageViewId);
-                        mImageView.setImageResource(R.drawable.pop_cat);
+//                        mImageView = (ImageView) findViewById(R.id.imageViewId);
+//                        mImageView.setImageResource(R.drawable.pop_cat);
+
+//                        dispatchTakePictureIntent();
 
                         }
                     });
@@ -346,7 +470,6 @@ public class MainActivity extends AppCompatActivity {
 //        addressBook
 //                .addAddress("0x35fEF2216D1426Eb69b3a5BC3F76c62Cb770F360", "joooaaaaoo")
 //                .send();
-//
 //    }
 //
 //    private void printAddresses(AddressBook addressBook) throws Exception {
@@ -362,19 +485,39 @@ public class MainActivity extends AppCompatActivity {
 
 
     private Credentials getCredentialsFromPrivateKey(){
-        TextView key = (TextView) findViewById(R.id.editUploadTxtName);
-        if(key.getText().toString().equals("")){
-            return Credentials.create(PRIVATE_KEY_CHROME);
-        } else {
-            return Credentials.create(key.getText().toString());
+        TextView key = (TextView) findViewById(R.id.editDeclareEthAddr);
+        Credentials cred = Credentials.create(PRIVATE_KEY_CHROME);
+        System.out.println(cred.getEcKeyPair().getPublicKey().toString());
+        return Credentials.create(PRIVATE_KEY_CHROME);
+
+    }
+
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        } catch (ActivityNotFoundException e) {
+            // display error state to the user
         }
+    }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mImageView.setImageBitmap(imageBitmap);
+        }
     }
 
     private GetAllTokId loadContract(String deployedAddr, Web3j web3j, Credentials credentials){
         return GetAllTokId.load(deployedAddr, web3j, credentials, GAS_PRICE, GAS_LIMIT);
     }
+
+
 
     private String deployContract(Web3j web3j, Credentials credentials) throws Exception {
 //        return Erc721.deploy(
@@ -437,6 +580,7 @@ public class MainActivity extends AppCompatActivity {
                 GAS_LIMIT
         ).send();
     }
+
 
 
 }

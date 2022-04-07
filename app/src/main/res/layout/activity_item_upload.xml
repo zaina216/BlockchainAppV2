@@ -22,7 +22,7 @@
         android:textStyle="bold|italic" />
 
     <EditText
-        android:id="@+id/editUploadTxtName"
+        android:id="@+id/editDeclareEthAddr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txtUploadheading"
@@ -36,7 +36,7 @@
         android:id="@+id/editUploadTxtDesc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editUploadTxtName"
+        android:layout_below="@id/editDeclareEthAddr"
         android:layout_centerInParent="true"
         android:layout_marginHorizontal="82dp"
         android:hint="@string/item_description"

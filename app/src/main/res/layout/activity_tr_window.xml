@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".trWindow">
+
+    <EditText
+        android:id="@+id/idTrBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginHorizontal="82dp"
+        android:hint="id"
+        android:minHeight="48dp"
+        android:textColor="@color/teal_700" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_centerInParent="true"
+        android:id="@+id/trBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/idTrBox"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="#0C90B8"
+        android:onClick="onButtonClick"
+        android:text="send" />
+
+</RelativeLayout>

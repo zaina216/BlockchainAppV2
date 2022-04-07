@@ -4,4 +4,5 @@ public class PinataUploadClass {
     String itemName;
     String itemDesc;
     String returnDate;
+    String imgLink;
 }
