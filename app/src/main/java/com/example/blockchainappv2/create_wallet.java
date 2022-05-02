@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.web3j.crypto.Credentials;
@@ -26,82 +28,70 @@ public class create_wallet extends AppCompatActivity {
         setupBouncyCastle();
     }
 
+    //Standard code to set up Android cryptographic providers
     private void setupBouncyCastle() {
         final Provider provider = Security.getProvider(BouncyCastleProvider.PROVIDER_NAME);
         if (provider == null) {
-            // Web3j will set up the provider lazily when it's first used.
             return;
         }
         if (provider.getClass().equals(BouncyCastleProvider.class)) {
-            // BC with same package name, shouldn't happen in real life.
             return;
 
         }
-        // Android registers its own BC provider. As it might be outdated and might not include
-        // all needed ciphers, we substitute it with a known BC bundled in the app.
-        // Android's BC has its package rewritten to "com.android.org.bouncycastle" and because
-        // of that it's possible to have another BC implementation loaded in VM.
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
-    public void writeFileOnInternalStorage(Context mcoContext, String sFileName, String sBody){
-        File dir = new File(mcoContext.getFilesDir(), "walletDir");
-        if(!dir.exists()){
-            dir.mkdir();
-        }
-
-        try {
-            File gpxfile = new File(dir, sFileName);
-            FileWriter writer = new FileWriter(gpxfile);
-            writer.append(sBody);
-            writer.flush();
-            writer.close();
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-    String wallet;
+    /*
+    Creates an Ethereum wallet file on the Android device. This allows each user to
+    have their own public ethereum address to send/receive NFTs and cryptocurrency.
+    The contents are encrypted with AES-128.
+    */
     public void onSavePassword(View view) {
-        try {
+        String wallet;
+        TextView pwd;
 
+        try {
             //Create wallet
 
-            TextView pwd = findViewById(R.id.editDeclareEthAddr);
+            pwd = findViewById(R.id.editDeclareEthAddr);
             ContextWrapper cw = new ContextWrapper(getApplicationContext());
-            // path to /data/data/yourapp/app_data/imageDir
+            // Code for accessing data directory in Android
             File directory = cw.getDir("walletDir", Context.MODE_PRIVATE);
             File f = new File(directory.getAbsolutePath());
 
-            System.out.println(f.getAbsolutePath());
+//            System.out.println(f.getAbsolutePath());
+            Toast.makeText(getApplicationContext(), "Creating your wallet...", Toast.LENGTH_LONG).show();
             wallet = WalletUtils.generateLightNewWalletFile(pwd.getText().toString(), directory);
             System.out.println("wallet output - " + wallet);
 
-            // Write to file. First line is the wallet filename, second is the password
-
+            // Write to file wallet filename
             File dir = new File(getApplicationContext().getFilesDir(), "walletDir");
-
             if(!dir.exists()){
                 dir.mkdir();
             }
 
             try {
-                File gpxfile = new File(dir, "userInfo.txt");
-                FileWriter writer = new FileWriter(gpxfile);
+                File infofile = new File(dir, "userInfo.txt");
+                FileWriter writer = new FileWriter(infofile);
                 writer.append(wallet);
                 writer.append(System.lineSeparator());
-                writer.append(pwd.getText().toString());
 
                 writer.flush();
                 writer.close();
             } catch (Exception e){
                 e.printStackTrace();
             }
-
+            Credentials walletCreds = WalletUtils.loadCredentials(pwd.getText().toString(), directory + "/" + wallet);
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("publicAddr", walletCreds.getAddress());
+            intent.putExtra("enteredPassword", true);
+            intent.putExtra("privkey", walletCreds.getEcKeyPair().getPrivateKey().toString());
+            intent.putExtra("pubKey", walletCreds.getEcKeyPair().getPublicKey().toString());
+            startActivity(intent);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return;
     }
 }

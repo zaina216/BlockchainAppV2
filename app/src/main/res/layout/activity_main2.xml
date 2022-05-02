@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:id="@+id/main">
 
     <TextView
         android:id="@+id/txtHello"
@@ -13,7 +14,7 @@
         android:layout_centerInParent="false"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="false"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="60dp"
         android:layout_marginBottom="10dp"
         android:text="Welcome"
         android:textColor="@color/teal_700"
@@ -72,7 +73,7 @@
         android:layout_marginTop="20dp"
         android:background="#0C90B8"
         android:onClick="onClick"
-        android:text="Save" />
+        android:text="Account info" />
 
 
 </RelativeLayout>

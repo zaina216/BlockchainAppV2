@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".create_wallet">
+    tools:context=".create_wallet"
+    android:id="@+id/createWallet">
 
     <TextView
         android:id="@+id/txtHello"

@@ -4,19 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ItemMenu">
+    tools:context=".ItemMenu"
+    android:id="@+id/itemMenu">
 
     <RelativeLayout
         android:id="@+id/top_part"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="50px">
 
         <TextView
             android:id="@+id/txtItemheading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="false"
-            android:layout_centerHorizontal="false"
+            android:layout_centerHorizontal="true"
             android:layout_centerVertical="false"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
@@ -26,20 +28,6 @@
             android:textSize="40sp"
             android:textStyle="bold|italic" />
 
-        <TextView
-            android:id="@+id/acctDeets"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/txtItemheading"
-            android:layout_centerInParent="false"
-            android:layout_centerHorizontal="false"
-            android:layout_centerVertical="false"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="Account details"
-            android:textColor="@color/teal_700"
-            android:textSize="20sp"
-            android:textStyle="italic" />
 
         <RelativeLayout
             android:id="@+id/checkRelLayout"
@@ -50,49 +38,61 @@
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@id/txtItemheading">
 
-            <CheckBox
-                android:id="@+id/bigFish"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Items sent" />
+<!--            <CheckBox-->
+<!--                android:id="@+id/bigFish"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:minWidth="0dp"-->
+<!--                android:minHeight="0dp"-->
+<!--                android:padding="5dp"-->
+<!--                android:text="Items you have" />-->
 
-            <CheckBox
-                android:id="@+id/smallPencil"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/bigFish"
-                android:text="Items received" />
+<!--            <CheckBox-->
+<!--                android:id="@+id/smallPencil"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@id/bigFish"-->
+<!--                android:minWidth="0dp"-->
+<!--                android:minHeight="0dp"-->
+<!--                android:text="Items available" />-->
 
-            <CheckBox
-                android:id="@+id/medSteak"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/smallPencil"
-                android:text="Items not sent" />
         </RelativeLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/addLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/acctDeets"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="#0C90B8"
-            android:onClick="onClickAddLayout"
-            android:text="addLayout" />
+        <!--        <androidx.appcompat.widget.AppCompatButton-->
+        <!--            android:id="@+id/addLayout"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_below="@id/acctDeets"-->
+        <!--            android:layout_marginLeft="10dp"-->
+        <!--            android:layout_marginBottom="10dp"-->
+        <!--            android:background="#0C90B8"-->
+        <!--            android:onClick="onClickAddLayout"-->
+        <!--            android:text="addLayout" />-->
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/trBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="163dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/acctDeets"
+            android:layout_below="@id/txtItemheading"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_toRightOf="@id/addLayout"
+            android:layout_marginTop="23dp"
+            android:layout_marginBottom="0dp"
             android:background="#0C90B8"
             android:onClick="transferToAccount"
-            android:text="send" />
+            android:text="send item" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/availableBtn"
+            android:layout_width="163dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txtItemheading"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="23dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toRightOf="@+id/trBtn"
+            android:background="#0C90B8"
+            android:onClick="viewAvailable"
+            android:text="view available items" />
 
     </RelativeLayout>
 
@@ -121,6 +121,7 @@
                 android:id="@+id/txtheading"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"

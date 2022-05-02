@@ -29,13 +29,15 @@ public class receiveItem extends AppCompatActivity {
 
         try {
             BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-            Bitmap bitmap = barcodeEncoder.encodeBitmap(contents, BarcodeFormat.QR_CODE, 400, 400);
+            Bitmap bitmap = barcodeEncoder.encodeBitmap(contents, BarcodeFormat.QR_CODE, 400,
+                    400);
+//            Bitmap bitmap = barcodeEncoder.encodeBitmap(
+//                    "0xa7d7df54c33e6579c9de2aff3df86dd2f0723c28",
+//                    BarcodeFormat.QR_CODE, 400, 400);
             ImageView imageViewQrCode = (ImageView) findViewById(R.id.qrCode);
             imageViewQrCode.setImageBitmap(bitmap);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
 }
